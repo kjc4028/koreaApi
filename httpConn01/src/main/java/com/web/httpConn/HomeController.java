@@ -10,6 +10,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -76,23 +77,48 @@ public class HomeController {
 			JSONObject response = (JSONObject)obj.get("response");
 			JSONArray result = (JSONArray)response.get("result");
 			
-			for(int i = 0; i<result.size();i++){
+			List<Map<String, Object>> list = new ArrayList<>();
+			for(int i = 1; i<result.size();i++){
+				Map<String, Object> map = new HashMap<>();
+				 
 				JSONObject tmp = (JSONObject)result.get(i);
-				System.out.println(tmp.get("subject"));
+				
+				map.put("subject", tmp.get("subject"));
+				map.put("publishOrg", tmp.get("publishOrg"));
+				map.put("contentsKor", tmp.get("contentsKor"));
+				map.put("atchfileUrl", tmp.get("atchfileUrl"));
+				map.put("atchfileNm", tmp.get("atchfileNm"));
+				map.put("contentId", tmp.get("contentId"));
+				map.put("policyType", tmp.get("policyType"));
+				map.put("originUrl", tmp.get("originUrl"));
+				map.put("viewCnt", tmp.get("viewCnt"));
+				map.put("regDate", tmp.get("regDate"));
+				list.add(map);
+				map=null;
+				
+				String atchfileNmTmp = (String) tmp.get("atchfileNm");
+				String atchfileUrl = (String) tmp.get("atchfileUrl");
+				atchfileUrl = atchfileUrl.replaceAll("&amp;", "&");
+				if(!atchfileNmTmp.equals("") || atchfileNmTmp == null) {
+					String[] arrAtchFileNmList = atchfileNmTmp.split("\\|\\|",0);
+					String[] arratchfileUrlList = atchfileUrl.split("\\|\\|",0);
+					for(int j=0; j<arrAtchFileNmList.length; j++) {
+						System.out.println(arrAtchFileNmList[j] + " / " + arratchfileUrlList[j] );
+					}
+				}
 			}
-			//System.out.println("123: "+json.length()+"/"+obj.size()+"/");
 			
 			urlConn.disconnect();
+			model.addAttribute("list", list);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			
-			
-			
-			
-	        // ÀÀ´ä Çì´õÀÇ Á¤º¸¸¦ ¸ðµÎ Ãâ·Â
+
+		
+		/*xml í˜•ì‹*/
+	        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 /*	        for (Map.Entry<String, List<String>> header : urlConn.getHeaderFields().entrySet()) {
 	            for (String value : header.getValue()) {
 	                System.out.println(header.getKey() + " : " + value);
@@ -112,7 +138,7 @@ public class HomeController {
 
         	
         	
-	        // ÀÀ´ä ³»¿ë(BODY) ±¸ÇÏ±â        
+	        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(BODY) ï¿½ï¿½ï¿½Ï±ï¿½        
 /*	        try (
 	        		InputStream in = urlConn.getInputStream();
 	                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
