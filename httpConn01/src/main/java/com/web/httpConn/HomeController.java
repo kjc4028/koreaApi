@@ -114,44 +114,6 @@ public class HomeController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-
-		
-		/*xml 형식*/
-	        // ���� ����� ������ ��� ���
-/*	        for (Map.Entry<String, List<String>> header : urlConn.getHeaderFields().entrySet()) {
-	            for (String value : header.getValue()) {
-	                System.out.println(header.getKey() + " : " + value);
-	            }
-	        }
-	        
-
-				try {
-		        	SAXBuilder builder = new SAXBuilder();
-		        	Document jdomDoc = builder.build(url);;
-		        	Element root = jdomDoc.getRootElement().getChild("root");
-		        	System.out.println(root.getValue());
-				} catch (JDOMException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
-
-        	
-        	
-	        // ���� ����(BODY) ���ϱ�        
-/*	        try (
-	        		InputStream in = urlConn.getInputStream();
-	                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-         
-	            byte[] buf = new byte[1024 * 8];
-	            int length = 0;
-	            while ((length = in.read(buf)) != -1) {
-	                out.write(buf, 0, length);
-	            }
-	            
-	            System.out.println(new String(out.toByteArray(), "UTF-8"));            
-	        }*/
-	        
 
 			
 		return "home";
