@@ -1,4 +1,4 @@
-package com.web.httpConn;
+package com.web.httpConn.controller;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -25,16 +27,23 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.web.httpConn.service.KoreaApiService;
 
 /**
  * Handles requests for the application home page.
  */
 @Controller
 public class HomeController {
+	@Autowired
+	private KoreaApiService koreaApiService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
@@ -45,7 +54,6 @@ public class HomeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) throws IOException {
 		logger.info("Welcome home! The client locale is {}.", locale);
-		
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 		
@@ -53,7 +61,7 @@ public class HomeController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		try {
+/*		try {
 		String fullUrl = "http://overtherainbow.korea.kr/search/policyJson.do?startDate=20181205&endDate=20181205";
 		URL url; 
 		HttpURLConnection urlConn;
@@ -113,10 +121,21 @@ public class HomeController {
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 
 			
 		return "home";
 	}
+	
+	
+	@RequestMapping(value = "/insertNew")
+	public String insertNews(Model model, @RequestParam Map<String, String> param
+			,HttpServletRequest req) throws Exception {
+		
+		String referer = req.getHeader("referer");
+		koreaApiService.insertKoreaApiList();
+		
+		return "redirect:"+referer;
+	}	
 	
 }
