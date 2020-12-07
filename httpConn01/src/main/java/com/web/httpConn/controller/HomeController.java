@@ -1,30 +1,22 @@
 package com.web.httpConn.controller;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +25,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.web.httpConn.service.KoreaApiService;
 
@@ -61,69 +52,19 @@ public class HomeController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-/*		try {
-		String fullUrl = "http://overtherainbow.korea.kr/search/policyJson.do?startDate=20181205&endDate=20181205";
-		URL url; 
-		HttpURLConnection urlConn;
-		BufferedReader br;
-		String json;
+		Calendar cal2 = new GregorianCalendar(Locale.KOREA);
+		cal2.add(10, -1);
+		SimpleDateFormat df2 = new SimpleDateFormat("HH");
+		String targetHour = df2.format(cal2.getTime());
+		SimpleDateFormat df3 = new SimpleDateFormat("yyyy-MM-dd");
+		String targetDay = df3.format(cal2.getTime());
 		
-			url = new URL(fullUrl);
-			urlConn = (HttpURLConnection)url.openConnection();
-			urlConn.setDoOutput(true);
-			urlConn.setRequestMethod("GET");
-			urlConn.connect();
-			
-			br = new BufferedReader(new InputStreamReader(urlConn.getInputStream(),"UTF-8"));
-			
-			json = br.readLine();
-			
-			JSONParser parser = new JSONParser();
-			
-			JSONObject obj = (JSONObject)parser.parse(json);
-			
-			JSONObject response = (JSONObject)obj.get("response");
-			JSONArray result = (JSONArray)response.get("result");
-			
-			List<Map<String, Object>> list = new ArrayList<>();
-			for(int i = 1; i<result.size();i++){
-				Map<String, Object> map = new HashMap<>();
-				 
-				JSONObject tmp = (JSONObject)result.get(i);
-				
-				map.put("subject", tmp.get("subject"));
-				map.put("publishOrg", tmp.get("publishOrg"));
-				map.put("contentsKor", tmp.get("contentsKor"));
-				map.put("atchfileUrl", tmp.get("atchfileUrl"));
-				map.put("atchfileNm", tmp.get("atchfileNm"));
-				map.put("contentId", tmp.get("contentId"));
-				map.put("policyType", tmp.get("policyType"));
-				map.put("originUrl", tmp.get("originUrl"));
-				map.put("viewCnt", tmp.get("viewCnt"));
-				map.put("regDate", tmp.get("regDate"));
-				list.add(map);
-				map=null;
-				
-				String atchfileNmTmp = (String) tmp.get("atchfileNm");
-				String atchfileUrl = (String) tmp.get("atchfileUrl");
-				atchfileUrl = atchfileUrl.replaceAll("&amp;", "&");
-				if(!atchfileNmTmp.equals("") || atchfileNmTmp == null) {
-					String[] arrAtchFileNmList = atchfileNmTmp.split("\\|\\|",0);
-					String[] arratchfileUrlList = atchfileUrl.split("\\|\\|",0);
-					for(int j=0; j<arrAtchFileNmList.length; j++) {
-						System.out.println(arrAtchFileNmList[j] + " / " + arratchfileUrlList[j] );
-					}
-				}
-			}
-			
-			urlConn.disconnect();
-			model.addAttribute("list", list);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
-
-			
+		System.out.println(targetHour + " : " + targetDay);
+		
+		
+		
+		
+		
 		return "home";
 	}
 	
@@ -133,9 +74,49 @@ public class HomeController {
 			,HttpServletRequest req) throws Exception {
 		
 		String referer = req.getHeader("referer");
-		koreaApiService.insertKoreaApiList();
+		try {
+			koreaApiService.insertKoreaApiList();
+		} catch (Exception e) {
+			System.out.println("ex");
+			e.printStackTrace();
+		}
 		
 		return "redirect:"+referer;
 	}	
+	
+	@RequestMapping(value = "/xmlLoad", method = RequestMethod.GET)
+	public String xmlLoad(Locale locale, Model model) throws IOException {
+		
+		  String fullUrl = "http://www.mafra.go.kr/gonews/xml/xml2.jsp?startDate=20200416&endDate=20200416";
+		  //String fullUrl = "http://www.ktv.go.kr/function/exp.gov.kr?startDate=20200901&endDate=20200901";
+	      URL url = new URL(fullUrl);
+	      HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+	      
+	      BufferedReader tempBufferedReader = null;
+	      BufferedReader bufferedReader = null;
+	      InputStream inputStream = null;
+	      
+	      conn.setDoOutput(true);
+	      conn.setRequestMethod("GET");
+
+	      tempBufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "euc-kr"));
+
+	      String tempStr = "";
+	      StringBuilder bufferedStr = new StringBuilder();
+	      while ((tempStr = tempBufferedReader.readLine()) != null) {
+	        bufferedStr.append(tempStr).append("\n");
+	      }
+
+	      inputStream = new ByteArrayInputStream(bufferedStr.toString().getBytes());
+	      bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+	      System.out.println("===============================");
+	      System.out.println(bufferedStr.toString());
+	      
+	      return "home";
+	  
+	  
+	}
+	
 	
 }
