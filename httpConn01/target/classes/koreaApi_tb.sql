@@ -7,5 +7,5 @@ contentId number(10) primary key not null
 ,atchfileUrl varchar(1000 byte)
 ,contentsKor clob
 ,publishOrg varchar(255 byte)
-regDate date
+,regDate date
 );

@@ -16,7 +16,7 @@
 		<property name="password" value="1234" />
 	</bean>
 	
-	    <bean id="dataSourceLog" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+	<bean id="dataSourceLog" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
         <constructor-arg ref="oracleDataSource" />
         <property name="logFormatter">
             <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
