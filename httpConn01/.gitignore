@@ -5,15 +5,14 @@ target/
 !**/src/main/**
 !**/src/test/**
 KJC/
-**/target/**
-**/.settings/**
+
 
 ### STS ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 
